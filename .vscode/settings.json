@@ -87,6 +87,9 @@
         "codecvt": "cpp",
         "fstream": "cpp",
         "stack": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "source_location": "cpp",
+        "shared_mutex": "cpp",
+        "stdfloat": "cpp"
     }
 }
