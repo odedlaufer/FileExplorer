@@ -36,6 +36,8 @@ std::vector<fs::path> filterFiles(const FilterOptions& options);
 
 std::vector<std::string> getTopFileExtensions(int topCount);
 
+void printCommonExtensions();
+
 
 
 

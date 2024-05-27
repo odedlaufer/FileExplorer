@@ -242,10 +242,10 @@ void handleUserInput() {
 
                 case 1:
                     filterOptions.criteria = FilterCriteria::TYPE;
-                    //TODO: SHOW MOST COMMON FILES AND USER CHOOSE BEFORE EXEC
-                    std::cout << "Choose file type (e.g txt)\n";
+                    printCommonExtensions();
+                    std::cout << "Choose file type\n";
                     std::getline(std::cin, filterTypeOp);
-                    
+
                     break;
                 case 2:
                     filterOptions.criteria = FilterCriteria::DATE_CREATED;
