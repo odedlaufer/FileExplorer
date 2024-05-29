@@ -9,8 +9,9 @@ int main() {
     displayCurrentDirectory();
 
     while(true) { 
-        handleUserInput();
-        displayCurrentDirectory();
+        if(!handleUserInput()) { 
+            break;
+        }
     }
 
     return 0;

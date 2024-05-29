@@ -7,7 +7,7 @@
 #include <sstream>
 #include <string>
 
-void handleUserInput() {
+bool handleUserInput() {
     std::string command;
     while (true) {
         std::cout << "Choose an option:\n"
@@ -147,7 +147,7 @@ void handleUserInput() {
                             break;
                         }
                         case 3:
-                            return;  // Go back to the previous menu
+                            break;  // Go back to the previous menu
                         default:
                             std::cerr << "Unknown option: " << searchOption << std::endl;
                             break;
@@ -237,21 +237,62 @@ void handleUserInput() {
             }
 
             std::string filterTypeOp;
+            int filterFileSize;
+            std::string startDateStr, endDateStr;
+            const std::size_t SIZE_1_MB = 1000000;       // 1 MB in bytes
+            const std::size_t SIZE_1_GB = 1000000000;    // 1 GB in bytes
+            
+            
 
             switch (filterOption) {
 
                 case 1:
                     filterOptions.criteria = FilterCriteria::TYPE;
+                    std::cout << "Common file extensions:\n";
                     printCommonExtensions();
-                    std::cout << "Choose file type\n";
+                    std::cout << "Choose valid extension:\n";
                     std::getline(std::cin, filterTypeOp);
-
+                    filterOptions.extension = filterTypeOp;
                     break;
                 case 2:
                     filterOptions.criteria = FilterCriteria::DATE_CREATED;
+                    std::cout << "Enter start date (YYYY-MM-DD): ";
+                    std::getline(std::cin, startDateStr);
+                    std::cout << "Enter end date (YYYY-MM-DD): ";
+                    std::getline(std::cin, endDateStr);
+                    filterOptions.startDate = parseDate(startDateStr);
+                    filterOptions.endDate = parseDate(endDateStr);
                     break;
                 case 3:
                     filterOptions.criteria = FilterCriteria::SIZE;
+
+                    std::cout << "Choose file size:\n"
+                              << "1. SIZE < 1 MB\n"
+                              << "2. 1 MB < SIZE < 1 GB\n"
+                              << "3. SIZE > 1 GB\n"
+                              << "Enter your choice:\n";
+                
+                    std::getline(std::cin, command);
+                    try {
+                        filterFileSize = std::stoi(command);
+                    } catch (const std::invalid_argument&) {
+                        std::cerr << "Invalid input. Please enter a number!" << std::endl;
+                        continue;
+                    }
+
+                    if (filterFileSize == 1) { 
+                        filterOptions.minSize = 0;
+                        filterOptions.maxSize = SIZE_1_MB;
+                    } else if (filterFileSize == 2) {
+                        filterOptions.minSize = SIZE_1_MB;
+                        filterOptions.maxSize = SIZE_1_GB;
+                    } else if (filterFileSize == 3) {
+                        filterOptions.minSize = SIZE_1_GB;
+                        filterOptions.maxSize = std::numeric_limits<std::size_t>::max();
+                    } else {
+                        std::cerr << "Invalid choice for file size filter: " << filterFileSize << "\n";
+                        continue;
+                    }
                     break;
                 default:
                         std::cerr << "Unknown sort criteria: " << filterOption << std::endl;
@@ -260,6 +301,10 @@ void handleUserInput() {
 
         
             std::vector<fs::path> filteredEntries = filterFiles(filterOptions);
+            if(filteredEntries.empty()) { 
+                std::cout << "No content!\n";
+                break;
+            }
             std::cout << "Filtered directory content:" << std::endl;
             for (const auto& entry : filteredEntries) { 
                 std::cout << entry.filename().string() << "\n";
@@ -270,7 +315,7 @@ void handleUserInput() {
             break;
         }
             case 8:
-                return;  // Quit the program
+                return false;  // Quit the program
             default:
                 std::cerr << "Unknown choice: " << option << std::endl;
                 break;
